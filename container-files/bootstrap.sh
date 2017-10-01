@@ -1,14 +1,15 @@
 #!/bin/sh
 
 # export PATH=$PATH:/usr/local/rvm/rubies/ruby-1.9.3-p551/bin
+export PATH=$PATH:/usr/local/rvm/rubies/ruby-2.2.8/bin
 
 # Prepare Database if it doesn't exist
 export MYSQL_PWD=$DB_PASS
-STATUS=`mysqlshow -u $DB_USER -h $DB_ADDRESS snorby`
+STATUS=`mysqlshow -u $DB_USER -h $DB_ADDRESS -p$DB_PASS snorby`
 if [[ $STATUS != "snorby" ]]; then
-    mysql -u $DB_USER -h $DB_ADDRESS -e "CREATE DATABASE snorby"
-    mysql -u $DB_USER -h $DB_ADDRESS -e "GRANT ALL ON snorby.* TO $DB_USER@'%' IDENTIFIED BY '$DB_PASS'"
-    mysql -u $DB_USER -h $DB_ADDRESS -e "flush privileges"
+    mysql -p$DB_PASS -u $DB_USER -h $DB_ADDRESS -e "CREATE DATABASE snorby"
+    mysql -p$DB_PASS -u $DB_USER -h $DB_ADDRESS -e "GRANT ALL ON snorby.* TO $DB_USER@'%' IDENTIFIED BY '$DB_PASS'"
+    mysql -p$DB_PASS -u $DB_USER -h $DB_ADDRESS -e "flush privileges"
     cd /usr/local/src/snorby
     bundle install
     sed -i 's/$DB_ADDRESS/'$DB_ADDRESS'/g' /usr/local/src/snorby/config/database.yml

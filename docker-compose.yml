@@ -1,0 +1,62 @@
+version: '2.1'
+services:
+    barnyard:
+        image: toulet/docker-barnyard2
+        depends_on:
+          mysql:
+            condition: service_healthy
+          snorby:
+            condition: service_started
+        volumes:
+          - /etc/suricata:/etc/suricata:ro
+          - /var/log/suricata:/var/log/suricata:ro
+        environment:
+          - DB_HOST=mysql
+          - DB_NAME=snorby
+          - DB_USER=user
+          - DB_PASS=password
+          - SENSOR_NAME=suricata
+        links:
+          - mysql
+    snorby:
+        build:
+          context: .
+          dockerfile: docker/Dockerfile-snorby
+        depends_on:
+          mysql:
+            condition: service_healthy
+        volumes:
+          - /etc/suricata/rules:/etc/suricata/rules:ro
+        ports:
+          - 8080:8080
+        links:
+          - mysql
+    # nginx:
+    #     image: nginx
+    #     ports:
+    #       - 443:443
+    #       - 80:80
+    #     volumes: 
+    #         - $basepath/config/nginx/amsterdam.conf:/etc/nginx/conf.d/default.conf:ro
+    #         - $basepath/config/nginx/ssl/:/etc/nginx/ssl/:ro
+    #     links:
+    #       - snorby
+    #     # volumes_from:
+    #     #  - sciriusstatic
+    mysql:
+        image: mysql:5.6.26
+        environment:
+          - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+          - MYSQL_ROOT_PASSWORD=new-password
+          - MYSQL_DATABASE=snorby
+          - MYSQL_USER=user
+          - MYSQL_PASSWORD=password
+        ports:
+          - 3306:3306
+        healthcheck:
+           test: mysql -h localhost -u root -pnew-password -e 'select * from user' mysql
+           timeout: 20s
+           retries: 2
+        # volumes:
+          # Preload files for data
+          # - ../schemaAndSeedData:/docker-entrypoint-initdb.d

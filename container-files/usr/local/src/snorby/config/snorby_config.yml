@@ -9,8 +9,7 @@
 production:
   # in case you want to run snorby under a suburi/suburl under eg. passenger:
   baseuri: ''
-  # baseuri: '/snorby'
-  domain: 'demo.snorby.org'
+  domain: localhost:8080
   wkhtmltopdf: /usr/bin/wkhtmltopdf
   ssl: false
   mailer_sender: 'root@localhost'

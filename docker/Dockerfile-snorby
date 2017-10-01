@@ -1,5 +1,4 @@
 FROM centos:centos7
-
 RUN \
     yum update -y && \
     yum install -y epel-release && \
@@ -19,9 +18,6 @@ RUN \
     sed -i 's/do_mysql (~> 0.10.6)/do_mysql (~> 0.10.17)/' Gemfile.lock && \
     sed -i 's/do_mysql (0.10.16)/do_mysql (0.10.17)/' Gemfile.lock && \
     bundle install
-
 COPY container-files /
-
-ENV DB_ADDRESS=127.0.0.1 DB_USER=user DB_PASS=new-password SNORBY_CONFIG=/usr/local/src/snorby/config/snorby_config.yml
-
+ENV DB_ADDRESS=mysql DB_USER=user DB_PASS=password SNORBY_CONFIG=/usr/local/src/snorby/config/snorby_config.yml
 ENTRYPOINT ["/bootstrap.sh"]
