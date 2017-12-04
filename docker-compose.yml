@@ -5,8 +5,8 @@ services:
         depends_on:
           mysql:
             condition: service_healthy
-          snorby:
-            condition: service_started
+          # snorby:
+          #  condition: service_started
         volumes:
           - /etc/suricata:/etc/suricata:ro
           - /var/log/suricata:/var/log/suricata:ro
@@ -29,6 +29,7 @@ services:
           - /etc/suricata/rules:/etc/suricata/rules:ro
         ports:
           - 8080:8080
+          - 3000:3000
         links:
           - mysql
     # nginx:
