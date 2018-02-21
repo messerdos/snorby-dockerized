@@ -5,8 +5,6 @@ services:
         depends_on:
           mysql:
             condition: service_healthy
-          # snorby:
-          #  condition: service_started
         volumes:
           - /etc/suricata:/etc/suricata:ro
           - /var/log/suricata:/var/log/suricata:ro
@@ -19,9 +17,7 @@ services:
         links:
           - mysql
     snorby:
-        build:
-          context: .
-          dockerfile: docker/Dockerfile-snorby
+        image: polinux/snorby
         depends_on:
           mysql:
             condition: service_healthy
@@ -32,18 +28,11 @@ services:
           - 3000:3000
         links:
           - mysql
-    # nginx:
-    #     image: nginx
-    #     ports:
-    #       - 443:443
-    #       - 80:80
-    #     volumes: 
-    #         - $basepath/config/nginx/amsterdam.conf:/etc/nginx/conf.d/default.conf:ro
-    #         - $basepath/config/nginx/ssl/:/etc/nginx/ssl/:ro
-    #     links:
-    #       - snorby
-    #     # volumes_from:
-    #     #  - sciriusstatic
+        environment:
+          - DB_ADDRESS=mysql
+          - DB_NAME=snorby
+          - DB_USER=user
+          - DB_PASS=password
     mysql:
         image: mysql:5.6.26
         environment:

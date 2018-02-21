@@ -1,0 +1,10 @@
+[Unit]
+Description=Suricata Intrusion Detection Service
+After=syslog.target network-online.target
+
+[Service]
+ExecStart=/bin/sh -c "/usr/local/sbin/trafr -s | /usr/sbin/suricata -c /etc/suricata/suricata.yaml --simulate-ips $OPTIONS -r -"
+EnvironmentFile=-/etc/sysconfig/suricata
+
+[Install]
+WantedBy=multi-user.target
